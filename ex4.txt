@@ -1,0 +1,65 @@
+PROGRAM ex4
+
+!*******************************************
+! Predictions of the path of a water
+! parcel subject to inertial oscillations.
+!
+! Author: J. Kaempf, 2008
+! modified by panhaidong,2014
+!*******************************************
+
+REAL :: u,v,un,vn,x,y,xn,yn
+REAL :: uo, vo, du, dv, ustar, vstar
+REAL :: dt,fre,f,pi,alpha,beta
+INTEGER :: n,ntot
+
+! ambient flow
+uo = 0.05
+vo = 0.05
+
+! initial relative speed and location
+u = 0.1
+v = 0.0
+x = 0.
+y = 0.
+
+pi = 4.*atan(1.)
+freq = -2.*pi/(24.*3600.)
+f = 2*freq
+dt = 6.*24.*3600./1200.
+alpha = f*dt
+beta = 0.25*alpha*alpha
+
+ntot = 1200;
+OPEN(10,FILE='E:\output2.txt',FORM='formatted')
+
+DO n = 1,ntot
+
+time = REAL(n)*dt
+du = 0.0
+dv = 0.0
+
+IF(n == 400) THEN
+ du = 0.0
+ dv = -0.3
+END IF
+
+IF(n == 800) THEN
+ du = 0.0
+ dv = 0.1
+END IF
+
+ustar = u + du
+vstar = v + dv
+  un = cos(alpha)*ustar+sin(alpha)*vstar
+  vn = cos(alpha)*vstar-sin(alpha)*ustar
+  xn = x + dt*(un+uo)/1000.0
+  yn = y + dt*(vn+vo)/1000.0
+
+u = un
+v = vn
+x = xn
+y = yn
+WRITE(10,*)x,y,time
+END DO
+END 
